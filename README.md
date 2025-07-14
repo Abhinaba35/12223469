@@ -1,133 +1,75 @@
 # URL Shortener Microservice
 
-A robust HTTP URL Shortener Microservice built with Node.js and Express.js that provides core URL shortening functionality along with basic analytical capabilities.
+This is a simple and practical URL shortener service built with Node.js, Express, and MongoDB. It lets you create short links for long URLs, set expiry times, and track usage stats.
 
 ## Features
 
-- Create shortened URLs with optional custom shortcodes
-- Automatic shortcode generation if not provided
-- Configurable URL validity (defaults to 30 minutes)
-- URL redirection with click tracking
-- Comprehensive statistics and analytics
-- Extensive logging integration with external logging service
-- Robust error handling with appropriate HTTP status codes
+- Shorten any valid URL
+- Custom or auto-generated shortcodes
+- Set expiry time for each short URL (in minutes)
+- Track total clicks and basic stats
+- RESTful API endpoints
 
-## API Endpoints
+## Getting Started
 
-### Create Short URL
-- **Method:** POST
-- **Route:** `/shorturls`
-- **Request Body:**
-```json
-{
-  "url": "https://very-very-very-long-and-descriptive-subdomain-that-goes-on-and-on.somedomain.com/additional/directory/levels/for/more/length/really-log-page",
-  "validity": 30,
-  "shortcode": "abcdl"
-}
-```
-- **Response (201):**
-```json
-{
-  "shortLink": "http://localhost:3000/abcdl",
-  "expiry": "2025-01-01T06:30:00.000Z"
-}
-```
+### Prerequisites
+- Node.js (v16 or higher recommended)
+- MongoDB (local or Atlas)
 
-### Retrieve Short URL Statistics
-- **Method:** GET
-- **Route:** `/shorturls/:shortcode`
-- **Response (200):**
-```json
-{
-  "shortcode": "abcdl",
-  "originalUrl": "https://example.com",
-  "createdAt": "2025-01-01T06:00:00.000Z",
-  "expiryTime": "2025-01-01T06:30:00.000Z",
-  "totalClicks": 5,
-  "isExpired": false,
-  "validity": 30,
-  "clickData": [
-    {
-      "timestamp": "2025-01-01T06:15:00.000Z",
-      "referrer": "direct",
-      "userAgent": "Mozilla/5.0...",
-      "ip": "127.0.0.1"
-    }
-  ]
-}
-```
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Abhinaba35/12223469.git
+   cd 12223469
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the root directory and add:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   BASE_URL=http://localhost:3000
+   ```
 
-### URL Redirection
-- **Method:** GET
-- **Route:** `/:shortcode`
-- **Response:** 302 Redirect to original URL
-
-## Setup and Installation
-
-1. Install dependencies:
+### Running the Service
+Start the server in development mode:
 ```bash
-npm install
+npm run dev
 ```
-
-2. Configure environment variables in `.env`:
-```
-AUTH_TOKEN=your_auth_token_from_test_server
-BASE_URL=http://localhost:3000
-PORT=3000
-```
-
-3. Start the server:
+Or in production mode:
 ```bash
 npm start
 ```
 
-For development with auto-reload:
-```bash
-npm run dev
-```
+## API Endpoints
 
-## Environment Variables
+### Create a Short URL
+- **POST** `/shorturls`
+- **Body:**
+  ```json
+  {
+    "url": "https://example.com",
+    "validity": 60,           
+    "shortcode": "custom123" 
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "shortLink": "http://localhost:3000/abc123",
+    "expiry": "2025-07-14T12:00:00.000Z"
+  }
+  ```
 
-- `AUTH_TOKEN`: Authorization token for the external logging service
-- `BASE_URL`: Base URL for generating short links (default: http://localhost:3000)
-- `PORT`: Server port (default: 3000)
+### Redirect to Original URL
+- **GET** `/:shortcode`
+- Redirects to the original URL if valid and not expired.
 
-## Dependencies
+### Get Short URL Stats
+- **GET** `/shorturls/:shortcode`
+- Returns stats including total clicks, creation and expiry time.
 
-- **express**: Web framework for Node.js
-- **axios**: HTTP client for making API requests to logging service
-- **uuid**: For generating unique identifiers
-- **cors**: Cross-Origin Resource Sharing middleware
-- **dotenv**: Environment variable management
-
-## Logging
-
-The application uses a comprehensive logging middleware that sends logs to an external test server. All significant operations are logged with appropriate log levels:
-
-- `info`: General information about operations
-- `debug`: Detailed debugging information
-- `warn`: Warning messages for non-critical issues
-- `error`: Error messages for failed operations
-- `fatal`: Critical system failures
-
-## Error Handling
-
-The API returns appropriate HTTP status codes and descriptive JSON responses:
-
-- `200`: Success
-- `201`: Created
-- `302`: Redirect
-- `400`: Bad Request (invalid input)
-- `404`: Not Found (shortcode doesn't exist)
-- `409`: Conflict (shortcode already exists)
-- `500`: Internal Server Error
-
-## Architecture
-
-The microservice follows a modular architecture:
-
-- `index.js`: Main application and route handlers
-- `urlShortenerService.js`: Core business logic
-- `loggingMiddleware.js`: External logging integration
-- `logger.js`: Logging utility wrapper
-- `package.json`: Project configuration and dependencies
+## Notes
+- The `.env` file is excluded from version control for security.
+- All logs are handled via a custom logger and sent to a remote evaluation service.
